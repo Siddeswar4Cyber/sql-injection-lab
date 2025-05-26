@@ -62,8 +62,16 @@ git clone https://github.com/Siddeswar4Cyber/sql-injection-lab.git
 
 cd sql-injection-lab
 
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
 # Install Python dependencies
-pip3 install -r requirements.txt
+pip install -r requirements.txt
+
+# Set script permissions
+chmod +x scripts/*.sh
+chmod +x scripts/*.py
 ```
 
 ### 2.2 Configure Environment
@@ -140,10 +148,7 @@ sudo sh -c "iptables-save > /etc/iptables/rules.v4"
 ### 5.1 Basic Testing
 ```bash
 # Start payload tester
-./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/
-
-# Test different security levels:
-./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -p id -m GET -d 0.5
+./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -c "PHPSESSID=f500f9f7006f6596003d0ad3983048b0" -s low
 ```
 
 ### 5.2 Automated Testing with Scripts
@@ -151,50 +156,40 @@ sudo sh -c "iptables-save > /etc/iptables/rules.v4"
 #### 1. Basic Testing with Payload Tester
 ```bash
 # Test all security levels
-./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/
+./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -c "PHPSESSID=f500f9f7006f6596003d0ad3983048b0"
 
 # Test specific security level
-./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -s low
-./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -s medium
-./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -s high
+./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -s low -c "PHPSESSID=f500f9f7006f6596003d0ad3983048b0"
+./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -s medium -c "PHPSESSID=f500f9f7006f6596003d0ad3983048b0"
+./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -s high -c "PHPSESSID=f500f9f7006f6596003d0ad3983048b0"
 ```
 
-#### 2. Advanced SQLMap Testing with Automation Script
-```bash
-# Run automated SQLMap tests
-./scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/" \
-  -c "PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de" \
-  -s "low,medium,high"
+#### 2. SQLMap Automation Script
+The SQLMap automation script provides a streamlined way to run SQLMap with various configurations. Here are some common use cases:
 
-# Test specific security level
-./scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/" \
-  -c "PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de" \
-  -s "medium"
-```
-
-#### 3. Custom SQLMap Testing
 ```bash
-# Basic scan using SQLMap
-./scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" \
+# Basic scan with cookie and security level
+python3 scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" \
+  -c "PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de; security=low"
+
+# List databases
+python3 scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" \
   -c "PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de; security=low" \
-  --batch --dbs
+  --list-dbs
 
-# Medium security level scan
-./scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/" \
-  -c "PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de; security=medium" \
-  --data="id=1&Submit=Submit" \
-  --method POST \
-  --random-agent \
-  --risk 3
+# Debug mode
+python3 scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" \
+  -c "PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de; security=low" \
+  --debug
 
-# High security level scan
-./scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/session-input.php" \
-  -c "PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de; security=high; id=1" \
-  -p id \
-  --level=5 \
-  --technique=Q \
-  --prefix="' " \
-  --suffix=" -- "
+# Comprehensive scan with all options
+python3 scripts/sqlmap_auto.py -u "http://localhost/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" \
+  -c "PHPSESSID=f4f8bd7a806d9c5bc733a4676647b1de; security=low" \
+  --list-dbs \
+  --debug \
+  --threads 10 \
+  --technique B \
+  --dbms MySQL
 ```
 
 ### 5.3 Manual Testing
@@ -203,6 +198,11 @@ sudo sh -c "iptables-save > /etc/iptables/rules.v4"
 3. Test different parameters:
    - id parameter (GET)
    - user parameter (POST)
+
+Example command to test DVWA SQL injection:
+```bash
+./scripts/payload_tester.sh -u http://localhost/dvwa/vulnerabilities/sqli/ -c "PHPSESSID=f500f9f7006f6596003d0ad3983048b0" -s low
+```
    - session parameters
 4. Use different payloads:
    - Generic SQLi
@@ -210,55 +210,19 @@ sudo sh -c "iptables-save > /etc/iptables/rules.v4"
    - Time-based SQLi
    - WAF bypass
 
-## 6. Report Generation
+## 6. Scan Organization
 
-### 6.1 Automated Report Generation
-```bash
-# Generate comprehensive reports
-./scripts/report_generator.py \
-  -i "results/scans/scan_*.xml" \
-  -o "results/reports/report_$(date +%Y%m%d_%H%M%S)" \
-  --format all
-
-# Generate specific format
-./scripts/report_generator.py \
-  -i "results/scans/scan_*.xml" \
-  -o "results/reports/report_$(date +%Y%m%d_%H%M%S)" \
-  --format html
-
-./scripts/report_generator.py \
-  -i "results/scans/scan_*.xml" \
-  -o "results/reports/report_$(date +%Y%m%d_%H%M%S)" \
-  --format json
-```
-
-### 6.2 Report Analysis
-```bash
-# Analyze reports
-./scripts/report_generator.py \
-  -i "results/scans/scan_*.xml" \
-  -o "results/analysis/analysis_$(date +%Y%m%d_%H%M%S)" \
-  --analyze
-
-# Generate summary
-./scripts/report_generator.py \
-  -i "results/scans/scan_*.xml" \
-  -o "results/analysis/summary_$(date +%Y%m%d_%H%M%S)" \
-  --summary
-```
-
-### 6.3 Report Organization
-1. Scans are automatically organized by date
-2. Reports include:
-   - Vulnerability details
-   - Exploitation methods
-   - Database access patterns
+1. Scans are automatically organized by date in the `results/scans/` directory
+2. Each scan includes:
+   - Raw output
+   - Session data
+   - Target information
+3. Results are stored in a structured format for easy analysis
    - Response analysis
    - Security recommendations
 3. Use the analysis scripts to:
    - Track progress
    - Compare different tests
-   - Generate statistics
    - Create visualizations
 
 ## 7. Cleanup and Security

