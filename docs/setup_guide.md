@@ -58,7 +58,7 @@ mkdir -p ~/sql-injection-lab
 cd ~/sql-injection-lab
 
 # Clone repository
-git clone https://github.com/yourusername/sql-injection-lab.git
+git clone https://github.com/Siddeswar4Cyber/sql-injection-lab.git
 
 cd sql-injection-lab
 
